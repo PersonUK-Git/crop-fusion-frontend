@@ -1,210 +1,48 @@
-
-body{
-  overflow-x: hidden;  /* Hide Scrollbars on X-axis*/
+.crop-result-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #f4f4f4; /* Use the same background color as other pages */
+  border-radius: 10px;
+  max-width: 800px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .crop-result-p {
-  color: black;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  font-size: x-large;
-  margin-left: 5%;
-  margin-top: 2%;
+  color: #333; /* Match color with other pages */
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
   text-align: center;
 }
 
+.crop-result-img {
+  max-width: 100%; /* Ensure responsiveness */
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
 .crop-result-description {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  font-size: 1.2rem;
-  font-weight: 360;
-  margin-left: 15%;
-  margin-right: 15%;
+  font-size: 1.1rem;
+  margin: 1rem 0;
   text-align: center;
+  color: #555; /* A subtle shade for readability */
 }
 
 .crop-try-btn {
   background-color: #10a37f;
-  border: none;
   color: white;
-  padding: 15px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  font-weight: bolder;
-  border-radius: 3px;
-  width: 10rem;
-  margin-left: 45%;
-  margin-top: 1%;
-  margin-bottom: 5%;
+  border: none;
+  padding: 15px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
 }
 
 .crop-try-btn:hover {
   background-color: #007553;
-}
-
-.crop-try-btn:active {
-  transform: scale(0.95, 0.95);
-}
-
-.crop-result-img {
-  max-width: 23%;
-  margin-left: 40%;
-  border-radius: 3px;
-}
-
-/*------------------------------------------------------------------------*/
-
-/* CSS for width between 350-415px */
-@media (350px <= width <= 415px) {
-  .crop-result-p {
-    font-size: larger;
-    margin-top: 8%;
-    margin-left: 10%;
-    margin-right: 10%;
-    width: fit-content;
-  }
-
-  .crop-result-img {
-    max-width: 80%;
-    margin-left: 15%;
-    border-radius: 3px;
-  }
-
-  .crop-result-description {
-    font-size: 0.9rem;
-    max-width: fit-content;
-    margin-right: 10%;
-    margin-left: 13%;
-  }
-
-  .crop-try-btn {
-    margin-left: 35%;
-  }
-}
-
-/*------------------------------------------------------------------------*/
-
-/* CSS for width between 415-815px */
-@media (415px <= width <= 815px) {
-  .crop-result-p {
-    font-size: x-larger;
-    margin-top: 8%;
-    margin-left: 25%;
-  }
-
-  .crop-result-img {
-    max-width: 80%;
-    margin-left: 25%;
-    border-radius: 3px;
-  }
-
-  .crop-result-description {
-    font-size: large;
-    margin: 0%;
-    margin-left: 24%;
-    margin-top: 5%;
-    margin-bottom: 5%;
-  }
-
-  .crop-try-btn {
-    margin-left: 45%;
-  }
-}
-
-/* CSS for width between 560-620px */
-@media (560px <= width <= 620px) {
-  .crop-result-p {
-    margin-left: 20%;
-  }
-
-  .crop-result-img {
-    max-width: 80%;
-    margin-left: 23%;
-    border-radius: 3px;
-  }
-
-  .crop-result-description {
-    font-size: large;
-    margin: 0%;
-    margin-left: 23%;
-    margin-top: 5%;
-    margin-bottom: 5%;
-  }
-
-  .crop-try-btn {
-    margin-left: 45%;
-  }
-}
-
-/*------------------------------------------------------------------------*/
-
-/* CSS for width between 620-815 */
-@media (620px <= width <= 815px) {
-  .crop-result-p {
-    margin-left: 20%;
-  }
-
-  .crop-result-img {
-    max-width: 80%;
-    margin-left: 20%;
-    border-radius: 3px;
-  }
-
-  .crop-result-description {
-    font-size: large;
-    margin: 0%;
-    margin-left: 18%;
-    margin-top: 5%;
-    margin-bottom: 5%;
-  }
-
-  .crop-try-btn {
-    margin-left: 45%;
-  }
-}
-
-/* CSS for width between 670-915px */
-@media (670px <= width <= 915px) {
-  .crop-result-p {
-    margin-left: 8%;
-  }
-
-  .crop-result-img {
-    max-width: 80%;
-    margin-left: 15%;
-    border-radius: 3px;
-  }
-
-  .crop-result-description {
-    font-size: large;
-    margin: 0%;
-    margin-left: 13%;
-    margin-right: 10%;
-    margin-top: 5%;
-    margin-bottom: 5%;
-  }
-
-  .crop-try-btn {
-    margin-left: 40%;
-  }
-}
-
-/* CSS for width between 815px-915px */
-@media (815px <= width <= 915px) {
-  .crop-result-img {
-    max-width: 80%;
-    margin-left: 20%;
-    border-radius: 3px;
-  }
-}
-
-/* CSS for width between 915-1200 */
-@media (915px <= width <= 1200px) {
-  .crop-result-img {
-    max-width: 90%;
-    margin-left: 25%;
-    border-radius: 3px;
-  }
 }

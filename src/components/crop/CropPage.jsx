@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import Header from "../header/Header.jsx";
 import "./CropPage.css";
 import { TextField } from "@mui/material";
@@ -5,11 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { output_descriptions } from "./CropOutputs";
 import LinearProgress from "@mui/material/LinearProgress";
 
-//--------------------------------------------------------------------
-
-// Focus on Empty Input fields
+// Focus on empty input fields
 function focusEmptyFields() {
-  // list of all the input elements
   const inputElements = [
     document.getElementById("nitrogen-crop-input"),
     document.getElementById("temp-crop-input"),
@@ -20,22 +18,17 @@ function focusEmptyFields() {
     document.getElementById("rainfall-crop-input"),
   ];
 
-  // Check if any of the input fields is empty & focus on it
   for (let i = 0; i < inputElements.length; i++) {
     if (inputElements[i].value === "") {
       inputElements[i].focus();
       return 0;
     }
   }
-
   return 1;
 }
 
-//--------------------------------------------------------------------
-
 const CROP_ENDPOINT = "http://192.168.0.229:8080/crop_recommend";
 
-// Min-Max values of crop inputs
 export const crop_value_ranges = {
   nitrogen: [0, 150],
   phosphorous: [5, 145],
@@ -46,45 +39,38 @@ export const crop_value_ranges = {
   rainfall: [20, 300],
 };
 
-// Called when Button Clicked
 function handleClick(navigate) {
-  // Continue only if all fields are filled.
   const isFieldEmpty = focusEmptyFields();
-  if (isFieldEmpty == 0) {
-    console.log("Some Inputs are empty !");
+  if (isFieldEmpty === 0) {
+    console.log("Some Inputs are empty!");
     return;
   }
 
-  // Get the values of all input fields
   const nitrogenValue = document.getElementById("nitrogen-crop-input").value;
   const tempValue = document.getElementById("temp-crop-input").value;
-  const phosphorousValue = document.getElementById(
-    "phosphorous-crop-input"
-  ).value;
+  const phosphorousValue = document.getElementById("phosphorous-crop-input").value;
   const humidityValue = document.getElementById("humidity-crop-input").value;
   const potassiumValue = document.getElementById("potassium-crop-input").value;
   const phValue = document.getElementById("ph-crop-input").value;
   const rainfallValue = document.getElementById("rainfall-crop-input").value;
 
-  // Check if the Input values are in required ranges
   const min_temp = crop_value_ranges.temperature[0];
   const max_temp = crop_value_ranges.temperature[1];
   const min_humid = crop_value_ranges.humidity[0];
   const max_humid = crop_value_ranges.humidity[1];
+
   if (tempValue < min_temp || tempValue > max_temp) {
-    window.alert("Temperature must be between 0-50 celcius !");
+    window.alert("Temperature must be between 0-50 Celsius!");
     return;
   } else if (humidityValue < min_humid || humidityValue > max_humid) {
-    window.alert(" Humidity must be between 1-100 !");
+    window.alert("Humidity must be between 1-100!");
     return;
   }
 
-  // Make progressbar visible
   const progressBar = document.querySelector(".crop-progress-bar");
   progressBar.style.display = "block";
   progressBar.style.visibility = "visible";
 
-  // JSON payload
   const data = {
     array: [
       parseFloat(nitrogenValue),
@@ -97,7 +83,6 @@ function handleClick(navigate) {
     ],
   };
 
-  // Send POST request to ML model
   fetch(CROP_ENDPOINT, {
     method: "POST",
     body: JSON.stringify(data),
@@ -107,100 +92,255 @@ function handleClick(navigate) {
     .then((data) => {
       console.log("Success:", data);
       console.log(output_descriptions[data]);
-  
-      // Redirect to Result page along with predicted crop
       navigate("/crop_result", { state: { predicted_crop: data } });
     })
     .catch((error) => {
       console.error("Error:", error);
-      window.alert("Some Error Occured, Try again.");
+      window.alert("Some Error Occurred. Try again.");
     });
 }
 
-//--------------------------------------------------------------------
-
 export function CropPage() {
   const navigate = useNavigate();
+  const [loadingModel, setLoadingModel] = useState(true);  // State to track model loading
 
-  // Called when Enter is pressed
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      handleClick(navigate);
-    }
-  });
+  useEffect(() => {
+    const handleEnterPress = (event) => {
+      if (event.key === "Enter") {
+        handleClick(navigate);
+      }
+    };
+
+    // Simulate model loading in the background (replace with actual model loading logic)
+    setTimeout(() => {
+      setLoadingModel(false);  // Set loading to false when model is loaded
+    }, 3000); // Simulating a 3-second delay for model loading
+
+    document.addEventListener("keydown", handleEnterPress);
+    return () => {
+      document.removeEventListener("keydown", handleEnterPress);
+    };
+  }, [navigate]);
 
   return (
     <>
       <Header />
-      <LinearProgress
-        style={{ visibility: "hidden", display: "none" }}
-        className="crop-progress-bar"
-        color="success"
-      />
-      <p className="crop-p">
-        {" "}
-        Enter soil characteristics to find the best <b> CROP </b> to grow on
-        your farm 👩‍🌾🌽🚜
-      </p>
-      <div className="crop-container">
-        <TextField
-          id="nitrogen-crop-input"
-          label="Ratio of Nitrogen"
-          variant="outlined"
+      <div className="background-wrapper">
+        <LinearProgress
+          style={{ visibility: loadingModel ? "visible" : "hidden", display: loadingModel ? "block" : "none" }}
+          className="crop-progress-bar"
           color="success"
-          type="number"
         />
-        <TextField
-          id="temp-crop-input"
-          label="Temperature in Celsius"
-          variant="outlined"
-          color="success"
-          type="number"
-          inputProps={{ min: 5, max: 50 }}
-        />
-        <TextField
-          id="phosphorous-crop-input"
-          label="Ratio of Phosphorous"
-          variant="outlined"
-          color="success"
-          type="number"
-        />
-        <TextField
-          id="humidity-crop-input"
-          label="% of Humidity"
-          variant="outlined"
-          color="success"
-          type="number"
-        />
-        <TextField
-          id="potassium-crop-input"
-          label="Ratio of Potassium"
-          variant="outlined"
-          color="success"
-          type="number"
-        />
-        <TextField
-          id="ph-crop-input"
-          label="PH Level of soil"
-          variant="outlined"
-          color="success"
-          type="number"
-        />
-        <TextField
-          id="rainfall-crop-input"
-          label="Rainfall in Milimeter (mm)"
-          variant="outlined"
-          color="success"
-          type="number"
-        />
-        <button
-          className="predict_crop_btn"
-          onClick={() => handleClick(navigate)}
-        >
-          {" "}
-          PREDICT{" "}
-        </button>
+        {loadingModel ? (
+          <p className="loading-model-loader">Loading model, please wait...</p>
+        ) : (
+          <>
+            <p className="crop-p">
+              Enter soil characteristics to find the best <b>CROP</b> to grow on your farm 👩‍🌾🌽🚜
+            </p>
+            <div className="crop-container">
+              <TextField
+                id="nitrogen-crop-input"
+                label="Ratio of Nitrogen"
+                variant="outlined"
+                color="success"
+                type="number"
+                fullWidth
+                margin="normal"
+                sx={{
+                  backgroundColor: "#0f0f0f", // Dark background
+                  "& .MuiInputBase-root": {
+                    color: "white", // White text inside the input
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white", // White border color
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white", // Maintain white border on hover
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "white", // White label text
+                  },
+                  "& .MuiInputBase-input::placeholder": {
+                    color: "white", // White placeholder text
+                  },
+                }}
+              />
+              <TextField
+                id="temp-crop-input"
+                label="Temperature in Celsius"
+                variant="outlined"
+                color="success"
+                type="number"
+                fullWidth
+                margin="normal"
+                inputProps={{ min: 5, max: 50 }}
+                sx={{
+                  backgroundColor: "#0f0f0f", // Dark background
+                  "& .MuiInputBase-root": {
+                    color: "white", // White text inside the input
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white", // White border color
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white", // Maintain white border on hover
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "white", // White label text
+                  },
+                  "& .MuiInputBase-input::placeholder": {
+                    color: "white", // White placeholder text
+                  },
+                }}
+              />
+              <TextField
+                id="phosphorous-crop-input"
+                label="Ratio of Phosphorous"
+                variant="outlined"
+                color="success"
+                type="number"
+                fullWidth
+                margin="normal"
+                sx={{
+                  backgroundColor: "#0f0f0f", // Dark background
+                  "& .MuiInputBase-root": {
+                    color: "white", // White text inside the input
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white", // White border color
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white", // Maintain white border on hover
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "white", // White label text
+                  },
+                  "& .MuiInputBase-input::placeholder": {
+                    color: "white", // White placeholder text
+                  },
+                }}
+              />
+              <TextField
+                id="humidity-crop-input"
+                label="% of Humidity"
+                variant="outlined"
+                color="success"
+                type="number"
+                fullWidth
+                margin="normal"
+                sx={{
+                  backgroundColor: "#0f0f0f", // Dark background
+                  "& .MuiInputBase-root": {
+                    color: "white", // White text inside the input
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white", // White border color
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white", // Maintain white border on hover
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "white", // White label text
+                  },
+                  "& .MuiInputBase-input::placeholder": {
+                    color: "white", // White placeholder text
+                  },
+                }}
+              />
+              <TextField
+                id="potassium-crop-input"
+                label="Ratio of Potassium"
+                variant="outlined"
+                color="success"
+                type="number"
+                fullWidth
+                margin="normal"
+                sx={{
+                  backgroundColor: "#0f0f0f", // Dark background
+                  "& .MuiInputBase-root": {
+                    color: "white", // White text inside the input
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white", // White border color
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white", // Maintain white border on hover
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "white", // White label text
+                  },
+                  "& .MuiInputBase-input::placeholder": {
+                    color: "white", // White placeholder text
+                  },
+                }}
+              />
+              <TextField
+                id="ph-crop-input"
+                label="PH Level of soil"
+                variant="outlined"
+                color="success"
+                type="number"
+                fullWidth
+                margin="normal"
+                sx={{
+                  backgroundColor: "#0f0f0f", // Dark background
+                  "& .MuiInputBase-root": {
+                    color: "white", // White text inside the input
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white", // White border color
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white", // Maintain white border on hover
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "white", // White label text
+                  },
+                  "& .MuiInputBase-input::placeholder": {
+                    color: "white", // White placeholder text
+                  },
+                }}
+              />
+              <TextField
+                id="rainfall-crop-input"
+                label="Rainfall in Millimeter (mm)"
+                variant="outlined"
+                color="success"
+                type="number"
+                fullWidth
+                margin="normal"
+                sx={{
+                  backgroundColor: "#0f0f0f", // Dark background
+                  "& .MuiInputBase-root": {
+                    color: "white", // White text inside the input
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white", // White border color
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white", // Maintain white border on hover
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "white", // White label text
+                  },
+                  "& .MuiInputBase-input::placeholder": {
+                    color: "white", // White placeholder text
+                  },
+                }}
+              />
+              <button
+                className="predict_crop_btn"
+                onClick={() => handleClick(navigate)}
+              >
+                PREDICT
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </>
   );
 }
+
+export default CropPage;
