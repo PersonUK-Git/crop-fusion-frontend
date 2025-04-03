@@ -39,10 +39,10 @@ export function CropResult() {
     // Fetch data from Gemini API
     const fetchGeminiData = async () => {
         try {
-            const genAI = new GoogleGenerativeAI("AIzaSyCC4m4NoNGu3QgHv7pXjz4QMnWXzOUsr7I");
-            const model = genAI.getGenerativeModel({ model: "gemini-exp-1114" });
+            const genAI = new GoogleGenerativeAI("AIzaSyAb8Rp5AoqpDkioj_f1hbop2tQGP5eUVc4");
+            const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-thinking-exp-01-21" });
 
-            const prompt = `Write the thing in a 3 or 4 lines about a fact and average price of that crop in INR  ${predicted_crop}.`;
+            const prompt = `Write the thing in a 3 or 4 lines about a fact and average price of that crop in INR  ${predicted_crop}. And , also suggest Which crop is best to grow in next rotation`;
 
             const result = await model.generateContent(prompt);
 
@@ -50,7 +50,7 @@ export function CropResult() {
             setGeneratedContent(result.response.text());
             setLoading(false); // Set loading to false when data is fetched
         } catch (err) {
-            setError('Error fetching data from Gemini API');
+            // setError('Error fetching data from Gemini API');
             setLoading(false);
         }
     };
@@ -80,7 +80,7 @@ export function CropResult() {
             {/* Render the generated content from Gemini */}
             <div className="crop-result-container">
                 <h3>Another Thing to Know</h3>
-                <p className='crop-result-description'>{generatedContent}</p>
+                <p className='crop-result-description'>{generatedContent || "Gemini servers are out of reach(429: Too Many Requests)"}</p>
             </div>
 
             <button className="crop-try-btn" onClick={() => navigate("/crop")}>Try again?</button>

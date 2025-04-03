@@ -10,7 +10,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { output_descriptions } from "./FertilizerOutputs.jsx";
 import { useNavigate } from "react-router-dom";
-import { crop_value_ranges } from "../crop/CropPage.jsx";
+import {crop_value_ranges} from "./../../constant/constants.js"
 import LinearProgress from "@mui/material/LinearProgress";
 
 var soilTypeVal = ""
